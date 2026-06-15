@@ -16,16 +16,12 @@ WORKDIR /var/www/html
 
 COPY --from=vendor /app /var/www/html
 
-# ✅ ADD THIS (CRITICAL FOR TiDB SSL)
-COPY storage/certs /var/www/html/storage/certs
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 storage bootstrap/cache
 
-RUN chmod -R 775 storage bootstrap/cache
-
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
  && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
-
-RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
