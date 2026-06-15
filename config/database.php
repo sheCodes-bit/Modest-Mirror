@@ -66,17 +66,6 @@ return [
 
     'strict' => true,
     'engine' => null,
-
-    // ✅ IMPORTANT FIX FOR TiDB / RENDER (SSL REQUIRED)
-    'options' => extension_loaded('pdo_mysql') ? array_filter([
-
-        // Disable strict SSL verification issues
-        PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
-
-        // Enable SSL connection (REQUIRED for TiDB Serverless)
-        PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA', null),
-
-    ]) : [],
 ],
 
         'mariadb' => [
