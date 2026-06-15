@@ -16,6 +16,9 @@ WORKDIR /var/www/html
 
 COPY --from=vendor /app /var/www/html
 
+# ✅ ADD THIS (CRITICAL FOR TiDB SSL)
+COPY storage/certs /var/www/html/storage/certs
+
 RUN chmod -R 775 storage bootstrap/cache
 
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
