@@ -1,8 +1,8 @@
 FROM php:8.2-apache
 
+# Install dependencies
 RUN apt-get update && apt-get install -y \
-    unzip curl git zip \
-    libzip-dev \
+    unzip zip curl git libzip-dev \
     && docker-php-ext-install pdo pdo_mysql zip
 
 # Enable Apache rewrite
@@ -19,12 +19,14 @@ COPY . .
 RUN composer install --no-dev --optimize-autoloader
 
 # Fix permissions
-RUN chown -R www-data:www-data /var/www/html
+RUN chmod -R 775 storage bootstrap/cache
 
-# Set Laravel public folder
+# IMPORTANT: point Apache to /public
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
  && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
+
+RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
